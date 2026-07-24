@@ -458,6 +458,30 @@ THE SOFTWARE.
 	#define TERM_Mode				 GPIO_MODE_OUTPUT_PP
 	#define TERM_Active_High		 1
 
+/*************** STM32H503 ***************/
+
+#elif defined(BOARD_prusa_x_nfc_01)
+	#define USBD_PRODUCT_STRING_FS	 "prusa_x_nfc_01 gs_usb"
+	#define USBD_MANUFACTURER_STRING "Prusa Research"
+	#define DFU_INTERFACE_STRING_FS	 "prusa_x_nfc_01 firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 240000000
+
+	#define CAN_INTERFACE			 FDCAN1
+	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
+	#define CONFIG_CANFD			 1
+
+	#define LEDRX_GPIO_Port			 GPIOB
+	#define LEDRX_Pin				 GPIO_PIN_6
+	#define LEDRX_Mode				 GPIO_MODE_OUTPUT_PP
+	#define LEDRX_Active_High		 0 /* LED cathode on PB6, anode to 3V3: on when pin is low */
+
+	#define LEDTX_GPIO_Port			 GPIOB
+	#define LEDTX_Pin				 GPIO_PIN_6
+	#define LEDTX_Mode				 GPIO_MODE_OUTPUT_PP
+	#define LEDTX_Active_High		 0
+
 #else
 	#error please define BOARD
 #endif

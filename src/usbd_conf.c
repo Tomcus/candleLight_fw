@@ -42,6 +42,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
 		__HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 #elif defined(USB_DRD_FS)
 		__HAL_RCC_USB_CLK_ENABLE();
+#if defined(STM32G0)
 		HAL_SYSCFG_StrobeDBattpinsConfig(SYSCFG_CFGR1_UCPD1_STROBE);
 		/* Enable VDDUSB */
 		if (__HAL_RCC_PWR_IS_CLK_DISABLED()) {
@@ -51,6 +52,8 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
 		} else {
 			HAL_PWREx_EnableVddUSB();
 		}
+#endif
+		/* STM32H503 powers the USB transceiver from VDD, nothing to enable here */
 #endif
 		HAL_NVIC_SetPriority(USB_INTERRUPT, 1, 0);
 		HAL_NVIC_EnableIRQ(USB_INTERRUPT);

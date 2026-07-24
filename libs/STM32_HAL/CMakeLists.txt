@@ -27,6 +27,7 @@ project(STM32_HAL)
 set(STM32F0_HALDIR stm32f0xx-hal-driver)
 set(STM32F4_HALDIR stm32f4xx-hal-driver)
 set(STM32G0_HALDIR stm32g0xx-hal-driver)
+set(STM32H5_HALDIR stm32h5xx-hal-driver)
 
 set(STM32F0_SOURCES
     config/stm32f0xx_hal_conf.h
@@ -199,6 +200,65 @@ set(STM32G0_SOURCES
     include/cmsis/device/system_stm32g0xx.h
 )
 
+set(STM32H5_SOURCES
+    config/stm32h5xx_hal_conf.h
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_def.h
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_fdcan.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_fdcan.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_cortex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_cortex.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_flash_ex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_flash_ex.c
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_flash.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_flash.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_gpio_ex.h
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_gpio.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_gpio.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_pcd_ex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_pcd_ex.c
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_pcd.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_pcd.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_rcc.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_rcc.c
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_rcc_ex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_rcc_ex.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_pwr.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_pwr.c
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_pwr_ex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_pwr_ex.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_tim_ex.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_tim_ex.c
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_hal_tim.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_hal_tim.c
+
+    ${STM32H5_HALDIR}/Inc/stm32h5xx_ll_usb.h
+    ${STM32H5_HALDIR}/Src/stm32h5xx_ll_usb.c
+
+    src/cmsis/system_stm32h5xx.c
+    ${STM32H5_HALDIR}/Inc/Legacy/stm32_hal_legacy.h
+
+    include/cmsis/cmsis_compiler.h
+    include/cmsis/cmsis_device.h
+    include/cmsis/cmsis_gcc.h
+    include/cmsis/cmsis_version.h
+    include/cmsis/core_cm33.h
+    include/cmsis/device/mpu_armv8.h
+    include/cmsis/device/stm32h5xx.h
+    include/cmsis/device/stm32h503xx.h
+    include/cmsis/device/system_stm32h5xx.h
+)
+
 set(INCLUDE_DIRS
     include
     include/cmsis
@@ -225,3 +285,8 @@ add_library(STM32_HAL_STM32G0B1xx STATIC ${STM32G0_SOURCES})
 target_include_directories(STM32_HAL_STM32G0B1xx PUBLIC ${INCLUDE_DIRS} ${STM32G0_HALDIR}/Inc)
 target_compile_options(STM32_HAL_STM32G0B1xx PRIVATE ${CPUFLAGS_G0} -Wno-unused-parameter)
 target_compile_definitions(STM32_HAL_STM32G0B1xx PUBLIC STM32G0B1xx)
+
+add_library(STM32_HAL_STM32H503xx STATIC ${STM32H5_SOURCES})
+target_include_directories(STM32_HAL_STM32H503xx PUBLIC ${INCLUDE_DIRS} ${STM32H5_HALDIR}/Inc)
+target_compile_options(STM32_HAL_STM32H503xx PRIVATE ${CPUFLAGS_H5} -Wno-unused-parameter)
+target_compile_definitions(STM32_HAL_STM32H503xx PUBLIC STM32H503xx)

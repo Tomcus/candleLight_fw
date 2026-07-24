@@ -33,9 +33,11 @@
 #define SYSMEM_STM32F042			   0x1FFFC400
 #define SYSMEM_STM32F072			   0x1FFFC800
 #define SYSMEM_STM32G0B1			   0x1FFF0000
+#define SYSMEM_STM32H503			   0x0BF87000
 
 static uint32_t dfu_reset_to_bootloader_magic;
 
+#if defined(STM32F0)
 static void dfu_hack_boot_pin_f042(void)
 {
 	__HAL_RCC_GPIOF_CLK_ENABLE();
@@ -50,6 +52,7 @@ static void dfu_hack_boot_pin_f042(void)
 
 	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_11, GPIO_PIN_SET);
 }
+#endif
 
 static void dfu_jump_to_bootloader(uint32_t sysmem_base)
 {
@@ -66,10 +69,12 @@ void __initialize_hardware_early(void)
 {
 	if (dfu_reset_to_bootloader_magic == RESET_TO_BOOTLOADER_MAGIC_CODE) {
 		switch (HAL_GetDEVID()) {
+#if defined(STM32F0)
 			case 0x445: // STM32F04x
 				dfu_hack_boot_pin_f042();
 				dfu_jump_to_bootloader(SYSMEM_STM32F042);
 				break;
+#endif
 
 			case 0x448: // STM32F07x
 				dfu_jump_to_bootloader(SYSMEM_STM32F072);
@@ -77,6 +82,10 @@ void __initialize_hardware_early(void)
 
 			case 0x467: // STM32G0B1
 				dfu_jump_to_bootloader(SYSMEM_STM32G0B1);
+				break;
+
+			case 0x474: // STM32H503
+				dfu_jump_to_bootloader(SYSMEM_STM32H503);
 				break;
 		}
 	}
