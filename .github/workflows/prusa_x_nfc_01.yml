@@ -1,0 +1,68 @@
+name: prusa_x_nfc_01 firmware
+
+# Build only the prusa_x_nfc_01 (STM32H503) target and publish its .bin.
+# All other board binaries are built by the upstream candleLight_fw CI.
+# A release is created on every push to master (i.e. after a rebase onto
+# upstream) so the newest firmware is always offered, and can also be
+# triggered manually via "Run workflow".
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  BUILD_TYPE: Release
+  CMAKE_TOOLCHAIN_FILE: cmake/arm-none-eabi-gcc.cmake
+  TARGET: prusa_x_nfc_01_fw
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install Arm GNU Toolchain (newlib)
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: 'latest'
+
+    - name: Configure CMake
+      run: |
+        cmake -B build \
+              -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+              -DCMAKE_TOOLCHAIN_FILE=${{ env.CMAKE_TOOLCHAIN_FILE }}
+
+    - name: Build ${{ env.TARGET }}
+      run: cmake --build build --target ${{ env.TARGET }} --parallel
+
+    - name: Get build metadata
+      id: meta
+      run: |
+        echo "date=$(date +'%Y%m%d')" >> "$GITHUB_OUTPUT"
+        echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+    - name: Upload firmware artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.TARGET }}_${{ steps.meta.outputs.date }}_${{ steps.meta.outputs.sha }}
+        path: build/${{ env.TARGET }}.bin
+        if-no-files-found: error
+
+    - name: Create release
+      if: github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: fw-${{ steps.meta.outputs.date }}-${{ steps.meta.outputs.sha }}
+        name: prusa_x_nfc_01 firmware ${{ steps.meta.outputs.date }} (${{ steps.meta.outputs.sha }})
+        make_latest: true
+        files: build/${{ env.TARGET }}.bin
+        body: |
+          STM32H503 `prusa_x_nfc_01` gs_usb firmware, built from ${{ github.sha }}.
+
+          Flash with an ST-LINK (see `openocd_h5.cfg`):
+          ```
+          openocd -f openocd_h5.cfg -c "program prusa_x_nfc_01_fw.bin 0x08000000 verify reset exit"
+          ```
