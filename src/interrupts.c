@@ -259,4 +259,16 @@ const pFunc InterruptVectorTable[48] = {
 	0,                    /* CEC                          */
 	// don't need to define any interrupts after this one
 };
+#elif defined(STM32H5)
+__attribute__((used, section(".vectors")))
+const pFunc InterruptVectorTable[91] = {
+	(pFunc)(&__StackTop), // initial stack pointer
+	Reset_Handler,        // reset handler
+	NMI_Handler,          // -14: NMI
+	HardFault_Handler,    // -13: HardFault
+	[15] = SysTick_Handler, // -1: SysTick
+	// External Interrupts
+	[16 + 74] = USB_Handler, // int 74: USB_DRD_FS
+	// CAN is polled, so no other interrupts are defined
+};
 #endif

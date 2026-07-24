@@ -131,6 +131,9 @@ void usbd_gs_can_purge_to_host_list_by_channel(USBD_GS_CAN_HandleTypeDef *hcan,
 #elif defined(STM32G0)
 # define USB_INTERFACE	  USB_DRD_FS
 # define USB_INTERRUPT	  USB_UCPD1_2_IRQn
+#elif defined(STM32H5)
+# define USB_INTERFACE	  USB_DRD_FS
+# define USB_INTERRUPT	  USB_DRD_FS_IRQn
 #endif
 
 uint8_t USBD_GS_CAN_Init(USBD_GS_CAN_HandleTypeDef *hcan, USBD_HandleTypeDef *pdev);
